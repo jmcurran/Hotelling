@@ -1,6 +1,6 @@
 #' Hotelling
 #' A set of R functions and data sets which implements Hotelling's T^2 test, and some variants of it. 
-#' Functions are also included for Aitchison's additive log ratio and centred log ratio transformations
+#' Functions are also included for Aitchison's additive log ratio and centred log ratio transformations.
 #' 
 #' @name Hotelling-package
 #' @aliases Hotelling-package Hotelling
