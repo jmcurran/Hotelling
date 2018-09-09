@@ -1,6 +1,6 @@
 Package: Hotelling
-Version: 1.0-3
-Date: 2017-04-20
+Version: 1.0-4
+Date: 2017-07-18
 Title: Hotelling's T^2 Test and Variants
 Authors@R: person("James", "Curran", email = "j.curran@auckland.ac.nz",
                   role = c("aut", "cre"))

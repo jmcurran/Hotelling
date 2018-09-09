@@ -55,7 +55,7 @@ hotelling.stat = function(x, y, shrinkage = FALSE){
 
     p = px
 
-    if(nx + nx < p - 1 & !shrinkage)
+    if(nx + ny < p - 1 & !shrinkage)
         stop("The sample sizes (nx + ny) must be 1 greater than the number of columns")
 
     mx = apply(x, 2, mean)
@@ -72,11 +72,11 @@ hotelling.stat = function(x, y, shrinkage = FALSE){
         sy = cov.shrink(y, verbose = FALSE)
     }
 
-    sPooled = ((nx - 1)*sx + (ny - 1)*sy)/(nx + ny - 2)
+    sPooled = ((nx - 1) * sx + (ny - 1) * sy) / (nx + ny - 2)
     sPooledInv = solve(sPooled)
 
-    T2 = t(mx - my) %*% sPooledInv %*% (mx - my)*nx*ny/(nx + ny)
-    m = (nx + ny - p - 1)/(p*(nx + ny - 2))
+    T2 = t(mx - my) %*% sPooledInv %*% (mx - my) * nx * ny/(nx + ny)
+    m = (nx + ny - p - 1)/(p * (nx + ny - 2))
 
     invisible(list(statistic = as.vector(T2), m = m, df = c(p, nx + ny - p - 1),
                    nx = nx, ny = ny, p = p))
