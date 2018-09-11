@@ -5,8 +5,6 @@
 \alias{hotelling.test.default}
 \alias{hotelling.test.formula}
 \alias{hotel.test}
-\alias{hotelling.test.default}
-\alias{hotelling.test.formula}
 \title{Two-sample Hotelling's T-squared test}
 \usage{
 hotelling.test(x, ...)

@@ -222,7 +222,7 @@ hotelling.test.formula = function(x, data = NULL, pair = c(1,2), ...){
     mf = model.frame(form, data)
 
     group = model.response(mf)
-    variables = mf[,-1]
+    variables = mf[,-1, drop = FALSE]
 
     split.data = split(variables,group)
 
@@ -315,6 +315,7 @@ plot.hotelling.test = function(x,...){
 #' ## an explict call
 #' print(fit)
 #' 
+#' @export
 print.hotelling.test = function(x, ...){
     if(is.na(match("results",names(x)))){
         with(x,{

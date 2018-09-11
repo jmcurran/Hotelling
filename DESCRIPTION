@@ -1,6 +1,6 @@
 Package: Hotelling
-Version: 1.0-4
-Date: 2017-07-18
+Version: 1.0-5
+Date: 2018-09-11
 Title: Hotelling's T^2 Test and Variants
 Authors@R: person("James", "Curran", email = "j.curran@auckland.ac.nz",
                   role = c("aut", "cre"))
@@ -8,4 +8,4 @@ Description: A set of R functions which implements Hotelling's T^2 test and some
 Depends: corpcor
 License: GPL (>= 2)
 URL: http://www.stat.auckland.ac.nz/showperson?firstname=James&surname=Curran
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0

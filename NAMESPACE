@@ -3,6 +3,7 @@
 S3method(hotelling.test,default)
 S3method(hotelling.test,formula)
 S3method(plot,hotelling.test)
+S3method(print,hotelling.test)
 export(alr)
 export(clr)
 export(hotelling.stat)
