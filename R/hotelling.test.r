@@ -13,6 +13,7 @@
 #' @param y a ny by p matrix containg the data points from sample 2
 #' @param shrinkage set to \code{TRUE} if the covariance matrices are to be estimated
 #' using Schaefer and Strimmer's James-Stein shrinkage estimator
+#' @param eqcovar set to \code{TRUE} if the covariance matrices are equal/homogeneous
 #' @return A list containing the following components:
 #' \item{statistic}{Hotelling's (unscaled) T-squared statistic} \item{m}{The
 #' scaling factor - this can be used by by multiplying it with the test
@@ -42,7 +43,7 @@
 #' hotelling.stat(x, y, TRUE)
 #' 
 #' @export
-hotelling.stat = function(x, y, shrinkage = FALSE){
+hotelling.stat = function(x, y, shrinkage = FALSE, eqcovar=FALSE){
     ## get the sample sizes for each sample
     nx = nrow(x)
     ny = nrow(y)
@@ -72,10 +73,15 @@ hotelling.stat = function(x, y, shrinkage = FALSE){
         sy = cov.shrink(y, verbose = FALSE)
     }
 
-    sPooled = ((nx - 1) * sx + (ny - 1) * sy) / (nx + ny - 2)
-    sPooledInv = solve(sPooled)
-
-    T2 = t(mx - my) %*% sPooledInv %*% (mx - my) * nx * ny/(nx + ny)
+    if(!eqcovar){
+        sPooled = (sx/nx) + (sy/ny)
+        sPooledInv = solve(sPooled)
+        T2 = t (mx-my) %*% sPooledInv %*% (mx-my) #for unequal covariance matrices
+    }else{
+        sPooled = ((nx - 1) * sx + (ny - 1) * sy) / (nx + ny - 2)
+        sPooledInv = solve(sPooled)
+        T2 = t(mx - my) %*% sPooledInv %*% (mx - my) * nx * ny/(nx + ny) #for equal covariance matrices
+    }
     m = (nx + ny - p - 1)/(p * (nx + ny - 2))
 
     invisible(list(statistic = as.vector(T2), m = m, df = c(p, nx + ny - p - 1),
@@ -160,16 +166,16 @@ hotelling.test = function(x, ...){
 
 #' @describeIn hotelling.test Two-sample Hotelling's T-squared test
 #' @export
-hotelling.test.default = function(x, y, shrinkage = FALSE, perm = FALSE,
+hotelling.test.default = function(x, y, shrinkage = FALSE, eqcovar = FALSE, perm = FALSE,
                                   B = 10000, progBar = (perm && TRUE), ...){
     if(!perm){
-        stats = hotelling.stat(x, y, shrinkage)
+        stats = hotelling.stat(x, y, shrinkage, eqcovar)
         pVal = with(stats, 1 - pf(m*statistic, df[1], df[2]))
         output = list(stats = stats, pval = pVal)
         class(output) = "hotelling.test"
         invisible(output)
     }else{
-        stats = hotelling.stat(x, y, shrinkage)
+        stats = hotelling.stat(x, y, shrinkage, eqcovar)
         res = rep(0, B)
 
         nx = stats$nx
@@ -193,7 +199,7 @@ hotelling.test.default = function(x, y, shrinkage = FALSE, perm = FALSE,
             x1 = X[i1,]
             x2 = X[-i1,]
 
-            res[i] = hotelling.stat(x1, x2, shrinkage)$statistic
+            res[i] = hotelling.stat(x1, x2, shrinkage, eqcovar)$statistic
             j = j + 1
             if(j == onePercent && progBar){
               k = k + 1
