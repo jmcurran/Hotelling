@@ -12,8 +12,8 @@
 #' @param x a nx by p matrix containing the data points from sample 1
 #' @param y a ny by p matrix containg the data points from sample 2
 #' @param shrinkage set to \code{TRUE} if the covariance matrices are to be estimated
+#' @param var.equal set to \code{TRUE} if the covariance matrices are equal/homogeneous
 #' using Schaefer and Strimmer's James-Stein shrinkage estimator
-#' @param eqcovar set to \code{TRUE} if the covariance matrices are equal/homogeneous
 #' @return A list containing the following components:
 #' \item{statistic}{Hotelling's (unscaled) T-squared statistic} \item{m}{The
 #' scaling factor - this can be used by by multiplying it with the test
@@ -22,6 +22,7 @@
 #' sample size of sample 1} \item{ny}{The sample size of sample 2} \item{p}{The
 #' number of variables to be used in the comparison}
 #' @author James M. Curran
+#' @author Taylor Hersh
 #' @references Hotelling, H. (1931). ``The generalization of Student's ratio.''
 #' Annals of Mathematical Statistics 2 (3): 360--378.
 #' 
@@ -32,6 +33,10 @@
 #' Opgen-Rhein, R., and K. Strimmer (2007). ``Accurate ranking of
 #' differentially expressed genes by a distribution-free shrinkage approach.''
 #' Statist. Appl. Genet. Mol. Biol. 6: 9.
+#' 
+#' NEL, D.G. and VAN DER MERWE, C.A. (1986). ``A solution to the -
+#' multivariate Behrens-Fisher problem.''
+#' Comm. Statist. Theor.- Meth., A15, 12, 3719-3736. 
 #' @keywords htest
 #' @examples
 #' 
@@ -43,7 +48,7 @@
 #' hotelling.stat(x, y, TRUE)
 #' 
 #' @export
-hotelling.stat = function(x, y, shrinkage = FALSE, eqcovar=FALSE){
+hotelling.stat = function(x, y, shrinkage = FALSE, var.equal = TRUE){
     ## get the sample sizes for each sample
     nx = nrow(x)
     ny = nrow(y)
@@ -72,22 +77,33 @@ hotelling.stat = function(x, y, shrinkage = FALSE, eqcovar=FALSE){
         sx = cov.shrink(x, verbose = FALSE)
         sy = cov.shrink(y, verbose = FALSE)
     }
-
-    if(!eqcovar){
-        sPooled = (sx/nx) + (sy/ny)
-        sPooledInv = solve(sPooled)
-        T2 = t (mx-my) %*% sPooledInv %*% (mx-my) #for unequal covariance matrices
-    }else{
-        sPooled = ((nx - 1) * sx + (ny - 1) * sy) / (nx + ny - 2)
-        sPooledInv = solve(sPooled)
-        T2 = t(mx - my) %*% sPooledInv %*% (mx - my) * nx * ny/(nx + ny) #for equal covariance matrices
+    
+    tr = function(X){
+      sum(diag(X))
     }
-    m = (nx + ny - p - 1)/(p * (nx + ny - 2))
 
-    invisible(list(statistic = as.vector(T2), m = m, df = c(p, nx + ny - p - 1),
+    if(var.equal){ #for equal covariance matrices
+      sPooled = ((nx - 1) * sx + (ny - 1) * sy) / (nx + ny - 2)
+      sPooledInv = solve(sPooled)
+      T2 = t(mx - my) %*% sPooledInv %*% (mx - my) * nx * ny/(nx + ny) 
+      m = (nx + ny - p - 1)/(p * (nx + ny - 2))
+      denomDegF = nx + ny - p - 1
+     }else{#for unequal covariance matrices
+       covDiff = (sx / nx) + (sy / ny)
+       covDiffInv = solve(covDiff)
+       T2 = t(mx - my) %*% covDiffInv %*% (mx - my) 
+       
+       num = tr(covDiff %*% covDiff) + tr(covDiff)^2
+       dx = (tr( (sx / nx) %*% (sx / nx) ) + tr(sx / nx)^2) / (nx - 1)
+       dy = (tr( (sy / ny) %*% (sy / ny) ) + tr(sy / ny)^2) / (ny - 1)
+       denomDegF = num / (dx + dy)
+       m = 1
+     }
+    
+
+    invisible(list(statistic = as.vector(T2), m = m, df = c(p, denomDegF),
                    nx = nx, ny = ny, p = p))
 }
-
 
 
 #' Two-sample Hotelling's T-squared test
@@ -159,6 +175,10 @@ hotelling.stat = function(x, y, shrinkage = FALSE, eqcovar=FALSE){
 #' fit23 = hotelling.test(.~Number, data = bottle.df, pair = c(2,3))
 #' fit23
 #' 
+#' data(manova1.df)
+#' fit = hotelling.test(wratr+wrata~treatment, data = manova1.df)
+#' fit
+#' 
 #' @export
 hotelling.test = function(x, ...){
     UseMethod("hotelling.test")
@@ -166,16 +186,16 @@ hotelling.test = function(x, ...){
 
 #' @describeIn hotelling.test Two-sample Hotelling's T-squared test
 #' @export
-hotelling.test.default = function(x, y, shrinkage = FALSE, eqcovar = FALSE, perm = FALSE,
+hotelling.test.default = function(x, y, shrinkage = FALSE, var.equal = TRUE, perm = FALSE,
                                   B = 10000, progBar = (perm && TRUE), ...){
     if(!perm){
-        stats = hotelling.stat(x, y, shrinkage, eqcovar)
+        stats = hotelling.stat(x = x, y = y, shrinkage = shrinkage, var.equal = var.equal)
         pVal = with(stats, 1 - pf(m*statistic, df[1], df[2]))
         output = list(stats = stats, pval = pVal)
         class(output) = "hotelling.test"
         invisible(output)
     }else{
-        stats = hotelling.stat(x, y, shrinkage, eqcovar)
+        stats = hotelling.stat(x = x, y = y, shrinkage = shrinkage, var.equal = var.equal)
         res = rep(0, B)
 
         nx = stats$nx
@@ -199,7 +219,7 @@ hotelling.test.default = function(x, y, shrinkage = FALSE, eqcovar = FALSE, perm
             x1 = X[i1,]
             x2 = X[-i1,]
 
-            res[i] = hotelling.stat(x1, x2, shrinkage, eqcovar)$statistic
+            res[i] = hotelling.stat(x = x1, y = x2, shrinkage = shrinkage, var.equal = var.equal)$statistic
             j = j + 1
             if(j == onePercent && progBar){
               k = k + 1
@@ -343,8 +363,8 @@ print.hotelling.test = function(x, ...){
 
 
 
-hotel.stat = function(x, y, shrinkage = FALSE){
-    hotelling.stat(x, y, shrinkage)
+hotel.stat = function(x, y, shrinkage = FALSE, var.equal = TRUE){
+    hotelling.stat(x = x, y = y, shrinkage = shrinkage, var.equal = TRUE)
 }
 
 hotel.test = function(x, ...){

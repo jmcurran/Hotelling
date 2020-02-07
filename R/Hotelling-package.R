@@ -30,9 +30,6 @@ NULL
 NULL
 
 
-
-
-
 #' Container data
 #' 
 #' This data contains the elemental concentration of nine different elements
@@ -49,5 +46,15 @@ NULL
 #' @keywords datasets
 NULL
 
-
-
+#' manova1 data
+#' 
+#' The data contains example data for testing the unequal variance option in the 
+#' package. The dataset has four varibles, \code{wratr}, \code{wrata}, \code{treatment}, 
+#' and \code{disability}. \code{treatment is the grouping variable} and \code{wratr} and \code{wrata}
+#' are the responses. \code{disability} is not used.
+#' 
+#' @name manova1.df
+#' @docType data
+#' @references \url{https://ncss-wpengine.netdna-ssl.com/wp-content/themes/ncss/pdf/Procedures/NCSS/Hotellings_Two-Sample_T2.pdf}
+#' @keywords datasets
+NULL
