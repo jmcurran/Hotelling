@@ -1,11 +1,15 @@
 Package: Hotelling
-Version: 1.0-5
-Date: 2018-09-11
+Version: 1.0-6
+Date: 2020-02-11
 Title: Hotelling's T^2 Test and Variants
-Authors@R: person("James", "Curran", email = "j.curran@auckland.ac.nz",
-                  role = c("aut", "cre"))
+Authors@R: c(person("James", "Curran", email = "j.curran@auckland.ac.nz",
+                  role = c("aut", "cre")),
+           person("Taylor", "Hersh", email = "taylor.hersh@dal.ca",
+                  role = c("aut")))
+Maintainer: James Curran <j.curran@auckland.ac.nz>
 Description: A set of R functions which implements Hotelling's T^2 test and some variants of it. Functions are also included for Aitchison's additive log ratio and centred log ratio transformations.
 Depends: corpcor
 License: GPL (>= 2)
 URL: http://www.stat.auckland.ac.nz/showperson?firstname=James&surname=Curran
-RoxygenNote: 6.1.0
+Encoding: UTF-8
+RoxygenNote: 7.0.2

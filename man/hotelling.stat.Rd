@@ -5,15 +5,20 @@
 \alias{hotel.stat}
 \title{Calculate Hotelling's two sample T-squared test statistic}
 \usage{
-hotelling.stat(x, y, shrinkage = FALSE)
+hotelling.stat(x, y, shrinkage = FALSE, var.equal = TRUE)
 }
 \arguments{
-\item{x}{a nx by p matrix containing the data points from sample 1}
+\item{x}{a nx by p matrix containing the data points from sample 1 or a list containing elements \code{mean}, \code{cov}, and \code{n} where
+\code{mean} is a mean vector of length p, \code{cov} is a variance-covariance matrix of dimension p by p, and \code{n} is the sample size}
 
-\item{y}{a ny by p matrix containg the data points from sample 2}
+\item{y}{a ny by p matrix containg the data points from sample 2  or a list containing elements \code{mean}, \code{cov}, and \code{n} where
+\code{mean} is a mean vector of length p, \code{cov} is a variance-covariance matrix of dimension p by p, and \code{n} is the sample size}
 
-\item{shrinkage}{set to \code{TRUE} if the covariance matrices are to be estimated
-using Schaefer and Strimmer's James-Stein shrinkage estimator}
+\item{shrinkage}{set to \code{TRUE} if the covariance matrices are to be estimated using Schaefer and Strimmer's James-Stein 
+shrinkage estimator. Note this only works when raw data is supplied, and will 
+not work if summary statistics are supplied.}
+
+\item{var.equal}{set to \code{TRUE} if the covariance matrices are equal/homogeneous}
 }
 \value{
 A list containing the following components:
@@ -55,8 +60,14 @@ Statist. Appl. Genet. Mol. Biol. 4: 32.
 Opgen-Rhein, R., and K. Strimmer (2007). ``Accurate ranking of
 differentially expressed genes by a distribution-free shrinkage approach.''
 Statist. Appl. Genet. Mol. Biol. 6: 9.
+
+NEL, D.G. and VAN DER MERWE, C.A. (1986). ``A solution to the -
+multivariate Behrens-Fisher problem.''
+Comm. Statist. Theor.- Meth., A15, 12, 3719-3736.
 }
 \author{
 James M. Curran
+
+Taylor Hersh
 }
 \keyword{htest}

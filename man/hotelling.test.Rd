@@ -9,47 +9,62 @@
 \usage{
 hotelling.test(x, ...)
 
-\method{hotelling.test}{default}(x, y, shrinkage = FALSE, perm = FALSE,
-  B = 10000, progBar = (perm && TRUE), ...)
+\method{hotelling.test}{default}(
+  x,
+  y,
+  shrinkage = FALSE,
+  var.equal = TRUE,
+  perm = FALSE,
+  B = 10000,
+  progBar = (perm && TRUE),
+  ...
+)
 
 \method{hotelling.test}{formula}(x, data = NULL, pair = c(1, 2), ...)
 }
 \arguments{
-\item{x}{a matrix containing the data points from sample 1 or a formula
+\item{x}{a matrix containing the data points from sample 1, or a formula
 specifying the elements to be used as a response and the grouping variable
-as a predictor}
+as a predictor, or a list containing elements \code{mean}, \code{cov}, and
+\code{n} where \code{mean} is a mean vector of length p, \code{cov} is a
+variance-covariance matrix of dimension p by p, and \code{n} is the sample
+size}
 
 \item{\dots}{any additional arguments. This is useful to pass the optional
 arguments for the default call from the formula version}
 
-\item{y}{a matrix containing the data points from sample 2}
+\item{y}{a matrix containing the data points from sample 2, or a list
+containing elements \code{mean}, \code{cov}, and \code{n} where \code{mean}
+is a mean vector of length p, \code{cov} is a variance-covariance matrix of
+dimension p by p, and \code{n} is the sample size}
 
-\item{shrinkage}{if \code{TRUE} then Shaefer and Strimmer's James-Stein shrinkage
-estimator is used to calculate the sample covariance matrices}
+\item{shrinkage}{if \code{TRUE} then Shaefer and Strimmer's James-Stein
+shrinkage estimator is used to calculate the sample covariance matrices}
 
 \item{perm}{if \code{TRUE} then permutation testing is used to estimate the
 non-parametric P-value for the hypothesis test}
 
 \item{B}{if perm is TRUE, then B is the number of permutations to perform}
 
-\item{progBar}{if \code{TRUE} and \code{perm} is TRUE then a progress bar will be
-displayed whilst the permutation procedure is carried out}
+\item{progBar}{if \code{TRUE} and \code{perm} is TRUE then a progress bar
+will be displayed whilst the permutation procedure is carried out}
 
 \item{data}{a data frame needs to be specified if a formula is to be used to
 perform the test}
 
-\item{pair}{a vector of length two which can be used when the grouping
-factor has more than two levels to select different pairs of groups. For
-example for a 3-level factor, pairs could be set to \code{c(1,3)} to perform
+\item{pair}{a vector of length two which can be used when the grouping factor
+has more than two levels to select different pairs of groups. For example
+for a 3-level factor, pairs could be set to \code{c(1,3)} to perform
 Hotelling's test between groups 1 an 3}
 }
 \value{
 A list (which is also of class 'hotelling.test') with the following
-elements:
+  elements:
 
-\item{stats}{a list containing all of the output from \code{hotelling.stat}}
-\item{pval}{the P-value from the test} \item{results}{if \code{perm == TRUE}, then
-all of the permuation test statisics are stored in results}
+  \item{stats}{a list containing all of the output from
+  \code{hotelling.stat}} \item{pval}{the P-value from the test}
+  \item{results}{if \code{perm == TRUE}, then all of the permuation test
+  statisics are stored in results}
 }
 \description{
 Performs a two-sample Hotelling's T-squared test for the difference in two
@@ -81,22 +96,34 @@ fit12
 fit23 = hotelling.test(.~Number, data = bottle.df, pair = c(2,3))
 fit23
 
+data(manova1.df)
+fit = hotelling.test(wratr+wrata~treatment, data = manova1.df, var.equal = FALSE)
+fit
+
+x = list(mean = c(7.81, 108.77, 44.92),
+         cov = matrix(c(0.461, 1.18, 4.49, 1.18, 3776.4, -17.35, 4.49, -17.35, 147.24), nc = 3, byrow = TRUE),
+         n = 13)
+y = list(mean = c(5.89, 41.9, 20.8),
+         cov = matrix(c(0.148, -0.679, 0.209, -0.679, 96.10, 20.20, 0.209, 20.20, 24.18), nc = 3, byrow = TRUE),
+         n = 10)
+fit = hotelling.test(x, y, var.equal = FALSE)
+fit
 }
 \references{
 Hotelling, H. (1931). ``The generalization of Student's ratio.''
-Annals of Mathematical Statistics 2 (3): 360--378.
+  Annals of Mathematical Statistics 2 (3): 360--378.
 
-Schaefer, J., and K. Strimmer (2005). ``A shrinkage approach to large-scale
-covariance matrix estimation and implications for functional genomics.''
-Statist. Appl. Genet. Mol. Biol. 4: 32.
+  Schaefer, J., and K. Strimmer (2005). ``A shrinkage approach to large-scale
+  covariance matrix estimation and implications for functional genomics.''
+  Statist. Appl. Genet. Mol. Biol. 4: 32.
 
-Opgen-Rhein, R., and K. Strimmer (2007). ``Accurate ranking of
-differentially expressed genes by a distribution-free shrinkage approach.''
-Statist. Appl. Genet. Mol. Biol. 6: 9.
+  Opgen-Rhein, R., and K. Strimmer (2007). ``Accurate ranking of
+  differentially expressed genes by a distribution-free shrinkage approach.''
+  Statist. Appl. Genet. Mol. Biol. 6: 9.
 
-Campbell, G.P. and J. M. Curran (2009). ``The interpretation of elemental
-composition measurements from forensic glass evidence III.'' Science and
-Justice, 49(1),2-7.
+  Campbell, G.P. and J. M. Curran (2009). ``The interpretation of elemental
+  composition measurements from forensic glass evidence III.'' Science and
+  Justice, 49(1),2-7.
 }
 \seealso{
 hotelling.stat
