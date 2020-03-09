@@ -4,11 +4,26 @@
 \alias{summarise}
 \alias{summarize}
 \alias{summarise.default}
+\alias{summarise.formula}
+\alias{summarise.data.frame}
 \title{Summary statistics for grouped data}
 \usage{
 summarise(x, ...)
 
-\method{summarise}{default}(x, y, stats = c(mean, median, sd, nrow), ...)
+\method{summarise}{default}(
+  x,
+  y,
+  stats = list(Mean = mean, Median = median, `Std. Dev.` = sd, N = length)
+)
+
+\method{summarise}{formula}(
+  x,
+  data = NULL,
+  stats = list(Mean = mean, Median = median, `Std. Dev.` = sd, N = length),
+  ...
+)
+
+\method{summarise}{data.frame}(x, y, ...)
 }
 \arguments{
 \item{x}{a matrix of multivariate observations, a list of summary statistics from
@@ -26,6 +41,10 @@ Easily get summary statistics for each group present in the data
 \section{Methods (by class)}{
 \itemize{
 \item \code{default}: Summary statistics for grouped data
+
+\item \code{formula}: Summary statistics for grouped data
+
+\item \code{data.frame}: Summary statistics for grouped data
 }}
 
 \examples{
@@ -35,5 +54,11 @@ split.data = split(container.df[,-1],container.df$gp)
 x = split.data[[1]]
 y = split.data[[2]]
 summarise(x, y)
+
+## Using the formula interface
+data(container.df)
+summarise(gp~., data = container.df)
+
+summarise(gp~Al+Ti, data = container.df)
 
 }

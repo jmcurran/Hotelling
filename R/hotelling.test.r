@@ -308,7 +308,7 @@ hotelling.test.formula = function(x, data = NULL, pair = c(1,2), ...){
   group = model.response(mf)
   variables = mf[,-1, drop = FALSE]
   
-  split.data = split(variables,group)
+  split.data = split(variables, group)
   
   
   x1 = as.matrix(split.data[[pair[1]]])
