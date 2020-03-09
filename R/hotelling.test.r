@@ -16,7 +16,7 @@
 #' @param shrinkage set to \code{TRUE} if the covariance matrices are to be estimated using Schaefer and Strimmer's James-Stein 
 #' shrinkage estimator. Note this only works when raw data is supplied, and will 
 #' not work if summary statistics are supplied.
-#' @param var.equal set to \code{TRUE} if the covariance matrices are equal/homogeneous
+#' @param var.equal set to \code{TRUE} if the covariance matrices are (assumed to be) equal
 #' @return A list containing the following components:
 #' \item{statistic}{Hotelling's (unscaled) T-squared statistic} \item{m}{The
 #' scaling factor - this can be used by by multiplying it with the test
@@ -53,7 +53,19 @@
 #' @export
 hotelling.stat = function(x, y, shrinkage = FALSE, var.equal = TRUE){
   
-  if(is.matrix(x) && is.matrix(y)){
+  twoMatrices = if((is.matrix(x) && is.matrix(y)) ||
+                   (is.data.frame(x) && is.data.frame(y))){
+                  TRUE
+                }else if(is.list(x) && is.list(y)){
+                  FALSE
+                }else{
+                  stop("x and y must be either both matrices, or both lists")
+                }
+  
+  if(twoMatrices){
+    x = as.matrix(x) #coerce just to make sure
+    y = as.matrix(y)
+    
     ## get the sample sizes for each sample
     nx = nrow(x)
     ny = nrow(y)
@@ -82,7 +94,7 @@ hotelling.stat = function(x, y, shrinkage = FALSE, var.equal = TRUE){
       sx = cov.shrink(x, verbose = FALSE)
       sy = cov.shrink(y, verbose = FALSE)
     }
-  }else if(is.list(x) && is.list(y)){
+  }else{
     nms.x = all(names(x) %in% c("mean", "cov", "n"))
     nms.y = all(names(y) %in% c("mean", "cov", "n"))
     
@@ -115,10 +127,8 @@ hotelling.stat = function(x, y, shrinkage = FALSE, var.equal = TRUE){
         stop("The shrinkage estimator cannot be used here because the raw data is not available")
       }
     }
-  }else{
-    stop("x and y must be either both matrices, or both lists")
   }
-  
+
   tr = function(X){
     sum(diag(X))
   }
@@ -169,6 +179,7 @@ hotelling.stat = function(x, y, shrinkage = FALSE, var.equal = TRUE){
 #'   dimension p by p, and \code{n} is the sample size
 #' @param shrinkage if \code{TRUE} then Shaefer and Strimmer's James-Stein
 #'   shrinkage estimator is used to calculate the sample covariance matrices
+#' @param var.equal set to \code{TRUE} if the covariance matrices are (assumed to be) equal
 #' @param perm if \code{TRUE} then permutation testing is used to estimate the
 #'   non-parametric P-value for the hypothesis test
 #' @param B if perm is TRUE, then B is the number of permutations to perform
@@ -230,10 +241,14 @@ hotelling.stat = function(x, y, shrinkage = FALSE, var.equal = TRUE){
 #' fit
 #' 
 #' x = list(mean = c(7.81, 108.77, 44.92),
-#'          cov = matrix(c(0.461, 1.18, 4.49, 1.18, 3776.4, -17.35, 4.49, -17.35, 147.24), nc = 3, byrow = TRUE),
+#'          cov = matrix(c(0.461, 1.18, 4.49,
+#'                         1.18, 3776.4, -17.35, 
+#'                         4.49, -17.35, 147.24), nc = 3, byrow = TRUE),
 #'          n = 13)
 #' y = list(mean = c(5.89, 41.9, 20.8),
-#'          cov = matrix(c(0.148, -0.679, 0.209, -0.679, 96.10, 20.20, 0.209, 20.20, 24.18), nc = 3, byrow = TRUE),
+#'          cov = matrix(c(0.148, -0.679, 0.209, 
+#'                        -0.679, 96.10, 20.20,
+#'                         0.209, 20.20, 24.18), nc = 3, byrow = TRUE),
 #'          n = 10)
 #' fit = hotelling.test(x, y, var.equal = FALSE)
 #' fit

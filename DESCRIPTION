@@ -8,7 +8,7 @@ Authors@R: c(person("James", "Curran", email = "j.curran@auckland.ac.nz",
                   role = c("aut")))
 Maintainer: James Curran <j.curran@auckland.ac.nz>
 Description: A set of R functions which implements Hotelling's T^2 test and some variants of it. Functions are also included for Aitchison's additive log ratio and centred log ratio transformations.
-Depends: corpcor, dplyr, glue
+Depends: corpcor
 License: GPL (>= 2)
 URL: http://www.stat.auckland.ac.nz/showperson?firstname=James&surname=Curran
 Encoding: UTF-8

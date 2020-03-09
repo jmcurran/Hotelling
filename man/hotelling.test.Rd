@@ -41,6 +41,8 @@ dimension p by p, and \code{n} is the sample size}
 \item{shrinkage}{if \code{TRUE} then Shaefer and Strimmer's James-Stein
 shrinkage estimator is used to calculate the sample covariance matrices}
 
+\item{var.equal}{set to \code{TRUE} if the covariance matrices are (assumed to be) equal}
+
 \item{perm}{if \code{TRUE} then permutation testing is used to estimate the
 non-parametric P-value for the hypothesis test}
 
@@ -101,10 +103,14 @@ fit = hotelling.test(wratr+wrata~treatment, data = manova1.df, var.equal = FALSE
 fit
 
 x = list(mean = c(7.81, 108.77, 44.92),
-         cov = matrix(c(0.461, 1.18, 4.49, 1.18, 3776.4, -17.35, 4.49, -17.35, 147.24), nc = 3, byrow = TRUE),
+         cov = matrix(c(0.461, 1.18, 4.49,
+                        1.18, 3776.4, -17.35, 
+                        4.49, -17.35, 147.24), nc = 3, byrow = TRUE),
          n = 13)
 y = list(mean = c(5.89, 41.9, 20.8),
-         cov = matrix(c(0.148, -0.679, 0.209, -0.679, 96.10, 20.20, 0.209, 20.20, 24.18), nc = 3, byrow = TRUE),
+         cov = matrix(c(0.148, -0.679, 0.209, 
+                       -0.679, 96.10, 20.20,
+                        0.209, 20.20, 24.18), nc = 3, byrow = TRUE),
          n = 10)
 fit = hotelling.test(x, y, var.equal = FALSE)
 fit

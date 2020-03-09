@@ -18,7 +18,7 @@ hotelling.stat(x, y, shrinkage = FALSE, var.equal = TRUE)
 shrinkage estimator. Note this only works when raw data is supplied, and will 
 not work if summary statistics are supplied.}
 
-\item{var.equal}{set to \code{TRUE} if the covariance matrices are equal/homogeneous}
+\item{var.equal}{set to \code{TRUE} if the covariance matrices are (assumed to be) equal}
 }
 \value{
 A list containing the following components:

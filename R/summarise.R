@@ -5,8 +5,15 @@
 #' @aliases summarize
 #' @param x a matrix of multivariate observations, a list of summary statistics from
 #' multivariate observations, a data.frame of multivariate observations, or a formula
-#' with a multivariate response on the left hand side, and a grouping variable/factor
-#' on the right hand side.
+#' with a multivariate response on the right hand side, and a grouping variable/factor
+#' on the left hand side.
+#' @param y a matrix of multivariate observations, a list of summary statistics from
+#' multivariate observations, OR a data.frame of multivariate observations
+#' @param data a data.frame containing the variables used in a formula
+#' @param stats a named list of summary statistics to compute on each variable in each 
+#' group. Note 1: Quantiles are not supported yet because I can't think of a good way to
+#' handle the extra arguments. Help welcome. Note 2: The names of the elements in the list 
+#' are used to label the columns of the output. They probably should be unique.
 #' @param \ldots other arguments such as another matrix of multivariate observations:
 #' see \code{summarise.default}, or a data to be used with a formula: see
 #' \code{summarise.formula}
@@ -24,6 +31,7 @@
 #' 
 #' summarise(gp~Al+Ti, data = container.df)
 #' 
+#' @importFrom stats median sd
 #' @export
 summarise = function(x, ...){
   UseMethod("summarise")
@@ -59,7 +67,8 @@ summarise.default = function(x,
                              stats = list(Mean = mean, 
                                                 Median = median, 
                                                 'Std. Dev.' = sd, 
-                                                N = length)){
+                                                N = length),
+                             ...){
   stats = calcStats(x, y, stats)
   cat("Group 1\n")
   cat("=======\n")
