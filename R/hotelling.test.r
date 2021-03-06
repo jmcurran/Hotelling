@@ -134,7 +134,13 @@ hotelling.stat = function(x, y, shrinkage = FALSE, var.equal = TRUE){
   }
   
   if(var.equal){ #for equal covariance matrices
-    sPooled = ((nx - 1) * sx + (ny - 1) * sy) / (nx + ny - 2)
+    df = nx + ny - 2
+    sPooled = 0
+    if (nx > 1)
+      sPooled = sPooled + (nx - 1) * sx
+    if (ny > 1)
+      sPooled = sPooled + (ny - 1) * sy
+    sPooled = sPooled/df
     sPooledInv = solve(sPooled)
     T2 = t(mx - my) %*% sPooledInv %*% (mx - my) * nx * ny/(nx + ny) 
     denomDegF = nx + ny - p - 1
