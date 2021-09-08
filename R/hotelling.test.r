@@ -295,8 +295,8 @@ hotelling.test.default = function(x, y, shrinkage = FALSE, var.equal = TRUE, per
     
     for(i in 1:B){
       i1 = sample(idx, nx)
-      x1 = X[i1,]
-      x2 = X[-i1,]
+      x1 = X[i1, ,drop=FALSE]
+      x2 = X[-i1, ,drop=FALSE]
       
       res[i] = hotelling.stat(x = x1, y = x2, shrinkage = shrinkage, var.equal = var.equal)$statistic
       j = j + 1
