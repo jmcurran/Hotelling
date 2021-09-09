@@ -4,4 +4,6 @@ language: r
 r:
   - release
   - devel
+script:
+  - R CMD check *tar.gz --as-cran
 cache: packages
